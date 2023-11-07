@@ -1,11 +1,14 @@
 package com.example.nationale_netherlanden;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Currency;
 
 @Getter
 @Setter
@@ -13,8 +16,9 @@ import org.hibernate.validator.constraints.NotBlank;
 @AllArgsConstructor
 public class ExchangeRequest {
 
-    @NotBlank(message = "Currency is Required")
-    private String fromCurrency;
+    @NotNull(message = "Currency is Required")
+    @Enumerated(EnumType.STRING)
+    private Currency fromCurrency;
     @Positive(message = "Ammount must be a positive number")
     private double amount;
 

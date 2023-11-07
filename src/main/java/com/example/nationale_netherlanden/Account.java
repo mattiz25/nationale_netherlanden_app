@@ -12,13 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
-    public Account(String firstName, String lastName, double balancePLN) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.balancePLN = balancePLN;
-        this.accountUid = UUID.randomUUID().toString();
-    }
-
     //    @Id
 //    @GeneratedValue(strategy = GenerationType.UUID)
 ////    @SequenceGenerator(name = "account_id", sequenceName = "account_id", allocationSize = 50)

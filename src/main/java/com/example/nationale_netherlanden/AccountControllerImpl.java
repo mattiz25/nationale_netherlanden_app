@@ -3,6 +3,7 @@ package com.example.nationale_netherlanden;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.example.nationale_netherlanden.DTO.AccountDto;
 import com.example.nationale_netherlanden.DTO.AccountMapper;
@@ -49,23 +50,49 @@ public class AccountControllerImpl implements AccountController {
 
 
     @PostMapping
-    public ResponseEntity<AccountDto> createAccount(@RequestBody @Valid AccountRequest accountRequest) {
+    public ResponseEntity<Account> createAccount(@RequestBody @Valid AccountRequest accountRequest) {
+        logger.info("initialization of request CreateAccount");
+
+        if (!findByAccountRequestInMap(accounts, accountRequest)) {
+            String newAccountUid;
+            do {
+                newAccountUid = UUID.randomUUID().toString();
+            }
+            while (findIfAnySameUuidAlreadyExists(accounts, newAccountUid));
+
+
+            Account account = new Account
+                    (newAccountUid,
+                            accountRequest.getFirstName(),
+                            accountRequest.getLastName(),
+                            accountRequest.getInitialBalancePLN());
+
+            accounts.put(account.getAccountUid(), account);
+            return ResponseEntity.ok(account);
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+
 
 //        accountService.createAccount(accounts, new AccountRequestDto());
 
-        logger.info("initialization of request CreateAccount");
 
 //        AccountRequestDto accountRequestDto = accountRequestMapper.accountRequestToAccountRequestDto(accountRequest);
 //
 //        return ResponseEntity.ok(accountService.createAccount(accounts, accountRequestDto));
 
-        Account account = new Account
-                (accountRequest.getFirstName(),
-                        accountRequest.getLastName(),
-                        accountRequest.getInitialBalancePLN());
-        accounts.put(account.getAccountUid(), account);
-        return ResponseEntity.ok(accountMapper.accountToAccountDto(account));
 
+    private boolean findByAccountRequestInMap(Map<String, Account> accounts, AccountRequest accountRequest) {
+        return accounts.values().stream()
+                .anyMatch(account -> account.getFirstName().equals(accountRequest.getFirstName()) &&
+                        account.getBalancePLN() == accountRequest.getInitialBalancePLN() &&
+                        account.getLastName().equals(accountRequest.getLastName()));
+
+    }
+
+    private boolean findIfAnySameUuidAlreadyExists(Map<String, Account> accounts, String accountUid) {
+        return accounts.keySet().stream()
+                .anyMatch(keyAccountUid -> accountUid.equals(keyAccountUid));
     }
 
 
@@ -78,7 +105,8 @@ public class AccountControllerImpl implements AccountController {
     }
 
     @GetMapping("/{accountUid}/balance")
-    public ResponseEntity<Map<String, Double>> getAccountBalance(@PathVariable String accountUid) throws IOException {
+    public ResponseEntity<Map<String, Double>> getAccountBalance(@PathVariable String accountUid) throws
+            IOException {
 
         logger.info("request of retriving account Balance from database with uuid ", accountUid);
 
@@ -88,28 +116,29 @@ public class AccountControllerImpl implements AccountController {
         double balanceUSD = account.getBalancePLN() / plnToUsdExchangeRate;
 
         Map<String, Double> balances = new HashMap<>();
-        balances.put("PLN", account.getBalancePLN());
-        balances.put("USD", balanceUSD);
+        balances.put(Currency.PLN.toString(), account.getBalancePLN());
+        balances.put(Currency.USD.toString(), balanceUSD);
 
         return ResponseEntity.ok(balances);
     }
 
     @PostMapping("/{accountUid}/exchange")
-    public Map<String, Double> exchangeCurrency(@PathVariable String accountUid, @RequestBody @Valid ExchangeRequest exchangeRequest) throws IOException {
+    public Map<String, Double> exchangeCurrency(@PathVariable String
+                                                        accountUid, @RequestBody @Valid ExchangeRequest exchangeRequest) throws IOException {
         Account account = accounts.get(accountUid);
         double plnToUsdExchangeRate = getPLNToUSDExchangeRate();
 
-        if (exchangeRequest.getFromCurrency().equalsIgnoreCase("PLN")) {
+        if (exchangeRequest.getFromCurrency().equals(Currency.PLN)) {
             if (account.getBalancePLN() >= exchangeRequest.getAmount()) {
-                account.balancePLN -= exchangeRequest.getAmount();
+                account.setBalancePLN(account.getBalancePLN() - exchangeRequest.getAmount());
                 double amountUSD = exchangeRequest.getAmount() / plnToUsdExchangeRate;
-                account.balancePLN += amountUSD;
+                account.setBalancePLN(account.getBalancePLN() + amountUSD);
             }
-        } else if (exchangeRequest.getFromCurrency().equalsIgnoreCase("USD")) {
+        } else if (exchangeRequest.getFromCurrency().equals(Currency.USD)) {
             double amountPLN = exchangeRequest.getAmount() * plnToUsdExchangeRate;
             if (account.getBalancePLN() >= amountPLN) {
-                account.balancePLN -= amountPLN;
-                account.balancePLN += exchangeRequest.getAmount();
+                account.setBalancePLN(account.getBalancePLN() - amountPLN);
+                account.setBalancePLN(account.getBalancePLN() + exchangeRequest.getAmount());
             }
         }
 

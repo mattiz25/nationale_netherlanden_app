@@ -8,25 +8,25 @@ import java.util.Map;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-
-    AccountRequestMapper accountRequestMapper;
-
-    public AccountDto createAccount(Map<String, Account> accounts, AccountRequestDto accountRequestDto) {
-
-        AccountRequest accountRequest = accountRequestMapper.accountRequestDtoToAccountRequest(accountRequestDto);
-
-        Account account = new Account(accountRequest.getFirstName(),
-                accountRequest.getLastName(),
-                accountRequest.getInitialBalancePLN());
-        accounts.put(account.getAccountUid(), account);
-
-        AccountDto accountDto = new AccountDto();
-        accountDto.setAccountUid(account.getAccountUid());
-        accountDto.setLastName(account.getLastName());
-        accountDto.setBalancePLN(account.getBalancePLN());
-
-        return accountDto;
-    }
+//
+//    AccountRequestMapper accountRequestMapper;
+//
+//    public AccountDto createAccount(Map<String, Account> accounts, AccountRequestDto accountRequestDto) {
+//
+//        AccountRequest accountRequest = accountRequestMapper.accountRequestDtoToAccountRequest(accountRequestDto);
+//
+//        Account account = new Account(accountRequest.getFirstName(),
+//                accountRequest.getLastName(),
+//                accountRequest.getInitialBalancePLN());
+//        accounts.put(account.getAccountUid(), account);
+//
+//        AccountDto accountDto = new AccountDto();
+//        accountDto.setAccountUid(account.getAccountUid());
+//        accountDto.setLastName(account.getLastName());
+//        accountDto.setBalancePLN(account.getBalancePLN());
+//
+//        return accountDto;
+//    }
 
 //    public Map<String, Double> getAccountBalance(String accountUid, Map<String, Account> accounts) {
 //    }

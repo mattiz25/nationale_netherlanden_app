@@ -7,6 +7,7 @@ import lombok.*;
 public class AccountDto {
 
     private String accountUid;
+    private String firstName;
     private String lastName;
     private double balancePLN;
 

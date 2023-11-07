@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface AccountController {
-    public ResponseEntity<AccountDto> createAccount(@RequestBody @Valid AccountRequest accountRequest);
+    public ResponseEntity<Account> createAccount(@RequestBody @Valid AccountRequest accountRequest);
 
     public ResponseEntity<Account> getAccount(@PathVariable String accountUid);
 
     public ResponseEntity<Map<String, Double>> getAccountBalance(@PathVariable String accountUid) throws IOException;
 
-    public Map<String, Double> exchangeCurrency(@PathVariable String accountUid, @RequestBody ExchangeRequest
+    public Map<String, Double> exchangeCurrency(@PathVariable String accountUid, @RequestBody @Valid ExchangeRequest
             exchangeRequest) throws IOException;
 
 }

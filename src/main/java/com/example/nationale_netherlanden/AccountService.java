@@ -6,5 +6,5 @@ import com.example.nationale_netherlanden.DTO.AccountRequestDto;
 import java.util.Map;
 
 public interface AccountService {
-    public AccountDto createAccount(Map<String, Account> accounts, AccountRequestDto accountRequestDto);
+//    public AccountDto createAccount(Map<String, Account> accounts, AccountRequestDto accountRequestDto);
 }
