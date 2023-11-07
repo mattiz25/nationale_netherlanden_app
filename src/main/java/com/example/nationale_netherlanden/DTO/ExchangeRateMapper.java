@@ -6,9 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ExchangeRateMapper {
-    ExchangeRateMapper INSTANCE = Mappers.getMapper(ExchangeRateMapper.class);
 
     ExchangeRate exchangeRateToExchangeRateDto(ExchangeRate exchangeRate);
 
